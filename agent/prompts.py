@@ -7,6 +7,10 @@ User input:
 Extract intent as JSON with this exact schema:
 {{
   "intent": "plan_day | schedule_task | add_task | update_preferences | summarize | unknown",
+  "work_start_hour": number | null,
+  "work_end_hour": number | null,
+  "lunch_hour": number | null,
+  "focus_hours": array[number] | null,
   "title": string | null,
   "duration_minutes": number | null,
   "time_constraint": string | null,
@@ -14,11 +18,12 @@ Extract intent as JSON with this exact schema:
 }}
 
 Rules:
-- Phrases like "plan my day", "schedule my day", "organize today", "what should I do today"
-  MUST be classified as plan_day.
-- If duration is given in hours, convert to minutes.
-- If the user introduces a new task, classify as schedule_task or add_task.
-- If timing is vague (e.g. "after lunch"), keep it in time_constraint.
-- If the user mentions work hours or lunch time, classify as update_preferences.
+- If the user specifies work hours, extract work_start_hour and work_end_hour.
+- If the user mentions lunch time, extract lunch_hour.
+- If the user mentions focus times (e.g. morning, evening), map to hours.
+- If no preference is mentioned, keep fields as null.
+- Phrases like "plan my day" or "schedule my day" MUST be plan_day.
+- If the user asks to add, create, or schedule a task, classify intent as schedule_task.
+- Extract title, duration_minutes, and priority when present.
 - Output ONLY valid JSON. No commentary.
 """

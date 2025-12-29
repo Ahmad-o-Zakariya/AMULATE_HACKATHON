@@ -1,7 +1,9 @@
 from langgraph.graph import StateGraph, END
-from .state import AgentState
+from .state import AgentState, Task
 from .tools import parse_intent, add_task, schedule_task_after_lunch
 from .planner import plan_day
+from .tools import parse_intent, add_task, schedule_task_after_lunch, update_preferences
+from uuid import uuid4
 
 
 # -------------------------
@@ -51,20 +53,27 @@ def planner_node(state: AgentState):
 # -------------------------
 
 def executor_node(state: AgentState):
-    intent_data = state.intent_data
+    data = state.intent_data
 
-    if intent_data["intent"] == "schedule_task":
-        state = add_task(
-            state,
-            intent_data["title"],
-            intent_data["priority"],
-            intent_data["duration_minutes"],
-        )
-        state = schedule_task_after_lunch(state, state.tasks[-1])
-        state.last_action_summary = "Task scheduled after lunch."
+    task = Task(
+        id=str(uuid4()),
+        title=data.get("title", "Untitled task"),
+        priority=data.get("priority", 3),
+        estimated_minutes=data.get("duration_minutes", 60),
+        status="pending",
+    )
 
+    state.tasks.append(task)
+
+    state.last_action_summary = f"Task added: {task.title}"
     return state
 
+# -------------------------
+# Preference node
+# -------------------------
+
+def update_preferences_node(state: AgentState):
+    return update_preferences(state, state.intent_data)
 
 # -------------------------
 # Response node
@@ -84,15 +93,25 @@ def build_graph():
     graph.add_node("intent", intent_node)
     graph.add_node("planner", planner_node)
     graph.add_node("executor", executor_node)
+    graph.add_node("update_preferences", update_preferences_node)
     graph.add_node("respond", response_node)
 
     graph.set_entry_point("intent")
 
-    # Conditional routing based on intent
+    def route_by_intent(state: AgentState):
+        if state.intent == "update_preferences":
+            return "update_preferences"
+        if state.intent == "plan_day":
+            return "planner"
+        if state.intent == "schedule_task":
+            return "executor"
+        return "respond"
+
     graph.add_conditional_edges(
         "intent",
         route_by_intent,
         {
+            "update_preferences": "update_preferences",
             "planner": "planner",
             "executor": "executor",
             "respond": "respond",
@@ -101,6 +120,8 @@ def build_graph():
 
     graph.add_edge("planner", "respond")
     graph.add_edge("executor", "respond")
+    graph.add_edge("update_preferences", "respond")
     graph.add_edge("respond", END)
 
     return graph.compile()
+

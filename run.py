@@ -4,17 +4,22 @@ from agent.state import AgentState
 graph = build_graph()
 state = AgentState()
 
-while True:
-    user_input = input("> ")
+print("AI Productivity Agent (type 'exit' to quit)")
 
-    # Normalize state if LangGraph returned a dict
+while True:
+    user_input = input("> ").strip()
+
+    if user_input.lower() in {"exit", "quit", "bye", "q"}:
+        print("See ya!")
+        break
+
+    # Normalize state if LangGraph returned dict
     if isinstance(state, dict):
         state = AgentState(**state)
 
     state.user_input = user_input
     state = graph.invoke(state)
 
-    # Normalize again after invoke
     if isinstance(state, dict):
         state = AgentState(**state)
 
