@@ -15,10 +15,30 @@ def parse_intent(user_input: str) -> dict:
     response = llm.invoke(
         INTENT_EXTRACTION_PROMPT.format(input=user_input)
     )
+
     try:
-        return json.loads(response.content)
+        parsed = json.loads(response.content)
     except json.JSONDecodeError:
-        return {"intent": "unknown"}
+        parsed = {"intent": "unknown"}
+
+    intent = parsed.get("intent", "unknown")
+    normalized = user_input.lower()
+
+    # Deterministic mapping for day planning
+    if intent == "unknown":
+        if any(phrase in normalized for phrase in [
+            "plan my day",
+            "schedule my day",
+            "organize my day",
+            "plan today",
+            "organize today",
+        ]):
+            intent = "plan_day"
+
+    parsed["intent"] = intent
+    return parsed
+
+
 
 def add_task(state: AgentState, title, priority, duration) -> AgentState:
     task = Task(

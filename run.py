@@ -6,5 +6,16 @@ state = AgentState()
 
 while True:
     user_input = input("> ")
-    state = graph.invoke(state, {"user_input": user_input})
+
+    # Normalize state if LangGraph returned a dict
+    if isinstance(state, dict):
+        state = AgentState(**state)
+
+    state.user_input = user_input
+    state = graph.invoke(state)
+
+    # Normalize again after invoke
+    if isinstance(state, dict):
+        state = AgentState(**state)
+
     print(state.last_action_summary)
