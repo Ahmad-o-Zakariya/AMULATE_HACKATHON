@@ -99,6 +99,27 @@ async function send() {
       });
     }
 
+    /* -----------------------------
+       Self-Reflection
+    ------------------------------ */
+    const reflectionBox = document.getElementById("reflection");
+    if (reflectionBox && data.reflection) {
+      reflectionBox.className =
+        "reflection " + (data.reflection.success ? "success" : "failure");
+
+      reflectionBox.innerHTML = `
+        <strong>Status:</strong> ${
+          data.reflection.success ? "Success" : "Partial / Failed"
+        }<br>
+        <strong>Explanation:</strong> ${data.reflection.explanation}
+        ${
+          data.reflection.limitations
+            ? `<br><strong>Limitations:</strong> ${data.reflection.limitations}`
+            : ""
+        }
+      `;
+    }
+
     // UI: completed state
     setStatus("done", "AI completed the action");
 
@@ -114,3 +135,18 @@ async function send() {
     setStatus("idle", "AI is idle");
   }, 2000);
 }
+
+/* -----------------------------
+   Enter Key Support
+------------------------------ */
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("input");
+  if (!input) return;
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+});

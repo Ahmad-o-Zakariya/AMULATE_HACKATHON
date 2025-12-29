@@ -4,7 +4,7 @@ from .tools import parse_intent, add_task, schedule_task_after_lunch
 from .planner import plan_day
 from .tools import parse_intent, add_task, schedule_task_after_lunch, update_preferences
 from uuid import uuid4
-
+from .reflection import reflect
 
 # -------------------------
 # Intent parsing node
@@ -44,7 +44,12 @@ def planner_node(state: AgentState):
     state.planned_schedule = result.schedule
     state.unscheduled_tasks = result.unscheduled
     state.last_action_summary = result.summary
-
+    state.reflection = reflect(
+        intent=state.intent,
+        summary=result.summary,
+        scheduled=len(result.schedule),
+        unscheduled=len(result.unscheduled),
+    )
     return state
 
 

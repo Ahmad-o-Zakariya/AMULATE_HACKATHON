@@ -172,7 +172,7 @@ h2 {
 }
 
 .agent::before {
-  content: "ARCUES AI";
+  content: "U-Dot AI";
   display: block;
   font-size: 11px;
   color: var(--muted);
@@ -293,4 +293,20 @@ button {
   0% { opacity: 0.3; }
   50% { opacity: 1; }
   100% { opacity: 0.3; }
+}
+
+.reflection {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.reflection.success {
+  border-left: 4px solid var(--secondary);
+  padding-left: 10px;
+}
+
+.reflection.failure {
+  border-left: 4px solid #ef4444;
+  padding-left: 10px;
 }

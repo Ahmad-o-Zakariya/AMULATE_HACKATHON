@@ -42,3 +42,4 @@ class AgentState(BaseModel):
 
     # User-facing output
     last_action_summary: str = ""
+    reflection: Optional[Dict] = None
