@@ -1,0 +1,8 @@
+langgraph>=0.0.40
+langchain>=0.2.10
+langchain-google-vertexai>=1.0.6
+google-cloud-aiplatform>=1.56.0
+mcp>=0.1.6
+fastapi
+uvicorn
+pydantic>=2.7
