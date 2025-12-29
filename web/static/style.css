@@ -1,0 +1,56 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f9fafb;
+  padding: 20px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.chat {
+  grid-row: span 3;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.panel {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+#messages {
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.user {
+  text-align: right;
+  margin: 6px 0;
+  color: #2563eb;
+}
+
+.agent {
+  text-align: left;
+  margin: 6px 0;
+  color: #111827;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  padding: 8px;
+}
+
+button {
+  padding: 8px 12px;
+}

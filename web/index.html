@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI Productivity Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <h1>AI Personal Productivity Agent</h1>
+
+    <div class="layout">
+      <div class="chat">
+        <h2>Chat</h2>
+        <div id="messages"></div>
+
+        <div class="input-row">
+          <input id="input" placeholder="Type a command…" />
+          <button onclick="send()">Send</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Today’s Plan</h2>
+        <ul id="schedule"></ul>
+      </div>
+
+      <div class="panel">
+        <h2>Tasks</h2>
+        <ul id="tasks"></ul>
+      </div>
+
+      <div class="panel">
+        <h2>Preferences</h2>
+        <div id="prefs"></div>
+      </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
