@@ -2,38 +2,71 @@
 <html>
   <head>
     <title>AI Productivity Agent</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="./static/style.css">
   </head>
-  <body>
-    <h1>AI Personal Productivity Agent</h1>
-
-    <div class="layout">
-      <div class="chat">
-        <h2>Chat</h2>
-        <div id="messages"></div>
-
-        <div class="input-row">
-          <input id="input" placeholder="Type a command…" />
-          <button onclick="send()">Send</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>Today’s Plan</h2>
-        <ul id="schedule"></ul>
-      </div>
-
-      <div class="panel">
-        <h2>Tasks</h2>
-        <ul id="tasks"></ul>
-      </div>
-
-      <div class="panel">
-        <h2>Preferences</h2>
-        <div id="prefs"></div>
-      </div>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="brand">
+      <span class="logo">⧉</span>
+      <span class="name">U-Dot AI</span>
     </div>
+    <div class="nav-links">
+      <span>Agentic-Planner</span>
+      <span>Developer Persona</span>
+    </div>
+  </nav>
 
-    <script src="/static/app.js"></script>
-  </body>
+  <!-- HERO -->
+  <header class="hero">
+    <h1>Plan. Execute. Reflect.</h1>
+    <p>
+      An agentic productivity assistant for software developers that reasons about time, tasks, and constraints.
+    </p>
+  </header>
+
+  <!-- DASHBOARD -->
+  <main class="dashboard">
+    <!-- CHAT -->
+    <section class="card chat">
+      <h2>Chat with U-Dot</h2>
+      <div id="agent-status" class="agent-status idle">
+    I am Idle. Let's Plan & Execute
+  </div>
+      <div id="messages" class="messages"></div>
+    <br>
+      <div class="input-row">
+        <input id="input" placeholder="Try: Add a 2 hour development session" />
+        <button onclick="send()">Send</button>
+      </div>
+    </section>
+
+    <!-- PLAN -->
+    <section class="card">
+      <h2>Today’s Plan</h2>
+      <ul id="schedule" class="list"></ul>
+    </section>
+
+    <!-- TASKS -->
+    <section class="card">
+      <h2>Tasks</h2>
+      <ul id="tasks" class="list"></ul>
+    </section>
+
+    <!-- PREFERENCES -->
+    <section class="card">
+      <h2>Preferences</h2>
+      <div id="prefs" class="prefs"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>
+      Built with LangGraph + Vertex AI · Deterministic planning · No Guesswork
+    </p>
+  </footer>
+
+  <script src="./static/app.js"></script>
+</body>
 </html>
