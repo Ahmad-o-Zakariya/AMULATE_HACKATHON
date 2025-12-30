@@ -9,6 +9,7 @@ class Task(BaseModel):
     priority: int = Field(ge=1, le=5)
     estimated_minutes: int
     status: str  # pending | scheduled | completed
+    time_constraint: str | None = None
 
 
 class CalendarEvent(BaseModel):

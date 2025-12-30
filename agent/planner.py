@@ -79,49 +79,69 @@ def plan_day(state: AgentState) -> PlanResult:
     for task in pending_tasks:
         placed = False
 
-        # Try focus-hour slots first
-        focus_slots = []
+    # Determine earliest allowed start time
+        earliest_allowed = None
+        if task.time_constraint == "after_lunch":
+            earliest_allowed = _today_at(prefs.lunch_hour) + timedelta(hours=1)
+
+    # Filter free slots based on constraint FIRST
+        eligible_slots = []
         for start, end in free_slots:
-            if start.hour in prefs.focus_hours:
+            if earliest_allowed and end <= earliest_allowed:
+                continue
+            eligible_slots.append((start, end))
+
+    # Try focus-hour slots first
+        focus_slots = []
+        for start, end in eligible_slots:
+            effective_start = max(start, earliest_allowed) if earliest_allowed else start
+            if effective_start.hour in prefs.focus_hours:
                 focus_slots.append((start, end))
 
         candidate_slots = focus_slots + [
-            s for s in free_slots if s not in focus_slots
+            s for s in eligible_slots if s not in focus_slots
         ]
 
         for slot in candidate_slots:
-            if _fits(task, slot):
-                start_time = slot[0]
-                end_time = start_time + timedelta(minutes=task.estimated_minutes)
+            slot_start, slot_end = slot
+            start_time = max(slot_start, earliest_allowed) if earliest_allowed else slot_start
 
-                schedule.append(
-                    TimeBlock(
-                        start=start_time,
-                        end=end_time,
-                        task_id=task.id,
-                        title=task.title,
-                    )
+            available_minutes = int((slot_end - start_time).total_seconds() // 60)
+            if task.estimated_minutes > available_minutes:
+                continue
+
+            end_time = start_time + timedelta(minutes=task.estimated_minutes)
+
+            schedule.append(
+            TimeBlock(
+                start=start_time,
+                end=end_time,
+                task_id=task.id,
+                title=task.title,
                 )
+            )
 
-                # Update task status
-                task.status = "scheduled"
+            task.status = "scheduled"
 
-                # Shrink or remove the used slot
-                free_slots.remove(slot)
-                if end_time < slot[1]:
-                    free_slots.append((end_time, slot[1]))
+        # Update free slots
+            free_slots.remove(slot)
+            if slot_start < start_time:
+                free_slots.append((slot_start, start_time))
+            if end_time < slot_end:
+                free_slots.append((end_time, slot_end))
 
-                placed = True
-                break
+            placed = True
+            break
 
         if not placed:
             unscheduled.append(
                 UnscheduledTask(
                     task_id=task.id,
                     title=task.title,
-                    reason="Insufficient continuous free time."
+                    reason="Insufficient time or time constraint."
                 )
             )
+
 
     # 6. Summary
     summary_lines = []

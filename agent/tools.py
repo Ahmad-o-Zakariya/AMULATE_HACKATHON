@@ -97,13 +97,14 @@ def parse_intent(user_input: str) -> dict:
 
 
 
-def add_task(state: AgentState, title, priority, duration) -> AgentState:
+def add_task(state: AgentState, title, priority, duration, time_constraint: str | None = None) -> AgentState:
     task = Task(
         id=str(uuid4()),
         title=title,
         priority=priority or 3,
         estimated_minutes=duration or 60,
-        status="pending"
+        status="pending",
+        time_constraint=time_constraint,
     )
     state.tasks.append(task)
     return state

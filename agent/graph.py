@@ -11,15 +11,16 @@ from .reflection import reflect
 # -------------------------
 
 def intent_node(state: AgentState):
-    print("INTENT NODE CALLED WITH:", state.user_input)
-    intent_data = parse_intent(state.user_input)
+    user_input = state.user_input or ""
+    print("INTENT NODE CALLED WITH:", user_input)
+
+    intent_data = parse_intent(user_input)
 
     # Store intent in state for routing
-    state.intent = intent_data["intent"]
+    state.intent = intent_data.get("intent", "unknown")
     state.intent_data = intent_data
 
     return state
-
 
 # -------------------------
 # Router (THIS IS KEY)
@@ -39,26 +40,38 @@ def route_by_intent(state: AgentState) -> str:
 # -------------------------
 
 def planner_node(state: AgentState):
+    # 🔧 FIX: Reset calendar before planning to avoid stale schedules
+    state.calendar_events = []
+
     result = plan_day(state)
 
     state.planned_schedule = result.schedule
     state.unscheduled_tasks = result.unscheduled
     state.last_action_summary = result.summary
+
+    # Self-reflection (evaluation only)
     state.reflection = reflect(
         intent=state.intent,
         summary=result.summary,
         scheduled=len(result.schedule),
         unscheduled=len(result.unscheduled),
     )
-    return state
 
+    return state
 
 # -------------------------
 # Executor node (task ops)
 # -------------------------
 
 def executor_node(state: AgentState):
-    data = state.intent_data
+    data = state.intent_data or {}
+
+    raw_text = (state.user_input or "").lower()
+
+    # Deterministic constraint extraction
+    time_constraint = None
+    if "after lunch" in raw_text:
+        time_constraint = "after_lunch"
 
     task = Task(
         id=str(uuid4()),
@@ -66,11 +79,14 @@ def executor_node(state: AgentState):
         priority=data.get("priority", 3),
         estimated_minutes=data.get("duration_minutes", 60),
         status="pending",
+        time_constraint=time_constraint,
     )
 
-    state.tasks.append(task)
+    print("TASK CONSTRAINT:", task.time_constraint)  # keep once to verify
 
+    state.tasks.append(task)
     state.last_action_summary = f"Task added: {task.title}"
+
     return state
 
 # -------------------------
