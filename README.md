@@ -15,7 +15,7 @@ This hybrid design ensures that the agent is **explainable, constraint-aware, an
 **Team Forcus** consists of **2 members**:
 
 - **Ahmad Zakariya** — *Developer, Ideator, System Architecture & Design*
-- **Shoraim Rashid** — *Research & Presentation (PPT)*
+- **Shoraim Rashid** — *Research & Design (PPT)*
 
 The team collaborated to balance deep technical implementation with research clarity and presentation, resulting in a robust and well-communicated system.
 
